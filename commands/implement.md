@@ -1,32 +1,32 @@
 ---
 name: implement
-description: "Inicia uma change (cria a branch) ou implementa UMA task em TDD — detecta backend (Spring) ou frontend (Vite)"
+description: "Start a change (create the branch) or implement ONE task with TDD — detects backend (Spring) or frontend (Vite)"
 category: workflow
 argument-hint: "init <change-id>  |  <change-id> <task-id>"
 ---
 
-Detecte o stack pelo cwd: **backend** se houver `pom.xml`/`mvnw`; **frontend** se houver
-`package.json` (Vite). Use o `CLAUDE.md` do repo como fonte canônica de regras. Dois modos:
+Detect the stack from the cwd: **backend** if `pom.xml`/`mvnw` exist; **frontend** if `package.json` (Vite) exists.
+The repo's `CLAUDE.md` is the canonical source of rules — follow it, including the output language (it mandates PT-BR for responses, comments and commits). Two modes:
 
-## Modo A — `init <change-id>` (preparar a branch)
+## Mode A — `init <change-id>` (prepare the branch)
 
-Não implemente nada. Siga as "Diretrizes de Git" do `CLAUDE.md` raiz (padrão `feature/<change-id>`):
+Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md` (pattern `feature/<change-id>`):
 
-1. Resolva o `<change-id>` (nome da spec): valide via `openspec show <change-id>` ou
-   `menthoros-product/openspec/changes/<change-id>/`. Se omitido, liste as changes ativas e peça para escolher.
-2. Árvore limpa: se houver mudanças não commitadas, PARE e avise.
+1. Resolve `<change-id>` (the OpenSpec spec name): validate via `openspec show <change-id>` or
+   `menthoros-product/openspec/changes/<change-id>/`. If omitted, list the active changes and ask the user to pick.
+2. Clean tree: if there are uncommitted changes, STOP and warn.
 3. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
-   (se a branch já existir, faça `checkout`).
-4. Reporte a branch e o commit base.
+   (if the branch already exists, `checkout` it instead).
+4. Report the branch and the base commit.
 
-## Modo B — `<change-id> <task-id>` (implementar UMA task em TDD)
+## Mode B — `<change-id> <task-id>` (implement ONE task with TDD)
 
-1. Leia o `CLAUDE.md` do repo e a change OpenSpec.
-2. Uma task por vez, dentro do escopo.
-3. **TDD red → green → refactor:**
-   - **Backend:** teste primeiro (JUnit 5 / Mockito / AssertJ; skill `springboot-tdd`); valide `./mvnw clean test`.
-   - **Frontend:** teste primeiro (Vitest + Testing Library); valide `npm run lint && npm run build && npm run test:run`.
-   - Tasks sem comportamento testável podem pular o teste — justifique.
-4. Marque a task em `tasks.md` como `[x]` e reporte arquivos/validação/follow-ups.
+1. Read the repo's `CLAUDE.md` and the OpenSpec change.
+2. One task at a time, in scope.
+3. **TDD red -> green -> refactor:**
+   - **Backend:** write the test first (JUnit 5 / Mockito / AssertJ; `springboot-tdd` skill); validate `./mvnw clean test`.
+   - **Frontend:** write the test first (Vitest + Testing Library); validate `npm run lint && npm run build && npm run test:run`.
+   - Tasks with no testable behavior may skip the test — justify it.
+4. Mark the task `[x]` in `tasks.md` and report files/validation/follow-ups.
 
-A branch deve já existir (Modo A). Nunca `--no-verify`/`@SuppressWarnings`/cast para burlar.
+The branch must already exist (Mode A). Never `--no-verify` / `@SuppressWarnings` / casts to bypass.

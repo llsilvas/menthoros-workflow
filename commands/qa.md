@@ -1,15 +1,15 @@
 ---
 name: qa
-description: "Gate de qualidade: reviewers em paralelo + validação — detecta backend ou frontend"
+description: "Quality gate: reviewers in parallel + validation — detects backend or frontend"
 category: workflow
 ---
 
-Detecte o stack pelo cwd e rode o gate sobre o diff vs `develop`, em PARALELO:
+Detect the stack from the cwd and run the gate over the diff vs `develop`, in PARALLEL:
 
-- **Backend** (`pom.xml`): delegue aos subagents `code-reviewer` + `security-reviewer`; rode `./mvnw clean test`.
-- **Frontend** (`package.json`): delegue ao subagent `frontend-reviewer`; rode `npm run lint && npm run build && npm run test:run`.
+- **Backend** (`pom.xml`): delegate to the `code-reviewer` and `security-reviewer` subagents; run `./mvnw clean test`.
+- **Frontend** (`package.json`): delegate to the `frontend-reviewer` subagent; run `npm run lint && npm run build && npm run test:run`.
 
-(Reforce com `/review` e `/security-review` nativos se instalados.)
+(Reinforce with the native `/review` and `/security-review` if installed.)
 
-Consolide um parecer priorizado (Crítico / Importante / Menor) com `arquivo:linha`. NÃO faça merge
-(isso é `/ship`). Só aprove se: tudo verde e nenhum achado Crítico.
+Consolidate a prioritized report (Critical / Important / Minor) with `file:line`. Do NOT merge (that is `/ship`).
+Approve only if everything is green and there is no Critical finding. Follow the repo's `CLAUDE.md` for conventions and output language (PT-BR).

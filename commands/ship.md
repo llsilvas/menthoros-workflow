@@ -1,24 +1,25 @@
 ---
 name: ship
-description: "Fecha a change: valida, merge --no-ff em develop, arquiva OpenSpec e atualiza SPRINTS"
+description: "Close the change: validate, merge --no-ff into develop, archive OpenSpec and update SPRINTS"
 category: workflow
 argument-hint: "<change-id>"
 ---
 
-Finalize a change `$ARGUMENTS`. Detecte o stack pelo cwd para a validação.
+Finalize the change `$ARGUMENTS`. Detect the stack from the cwd for validation.
 
-**Pré-condições:** `tasks.md` com itens `[x]`; suíte verde (`./mvnw clean test` no backend;
-`npm run lint && build && test:run` no front); `/qa` sem achado Crítico.
+**Preconditions:** `tasks.md` items `[x]`; suite green (`./mvnw clean test` on backend;
+`npm run lint && build && test:run` on frontend); `/qa` with no Critical finding.
 
-Siga as "Diretrizes de Git" do `CLAUDE.md` raiz. **Operações em `develop` exigem CONFIRMAÇÃO explícita:**
+Follow the "Diretrizes de Git" in the root `CLAUDE.md`. **Operations on `develop` require explicit user confirmation:**
 
-1. `git push -u origin feature/<change-id>` (se ainda não enviado)
+1. `git push -u origin feature/<change-id>` (if not pushed yet)
 2. `git checkout develop && git pull origin develop`
 3. `git merge feature/<change-id> --no-ff -m "Merge branch 'feature/<change-id>'"`
 4. `git push origin develop`
 5. `git branch -d feature/<change-id>`
 
-Feche o loop OpenSpec (em `menthoros-product`): atualize `tasks.md`, `openspec archive <change-id>`,
-e atualize a linha no `openspec/SPRINTS.md`.
+Then close the OpenSpec loop (in `menthoros-product`): update `tasks.md`, `openspec archive <change-id>`,
+and update the change's line in `openspec/SPRINTS.md`.
 
-Nunca `--no-verify`, nunca `--force` em `develop`, nunca misture changes. Reporte merge/archive/SPRINTS.
+Never `--no-verify`, never `--force` on `develop`, never mix changes. Report merge/archive/SPRINTS.
+Output language follows the repo's `CLAUDE.md` (PT-BR for commits/messages).
