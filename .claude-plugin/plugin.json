@@ -1,7 +1,7 @@
 {
   "name": "menthoros-workflow",
   "version": "1.0.0",
-  "description": "Fluxo OpenSpec-first do Menthoros: /implement, /qa, /ship + reviewers e guardrails de git. Context-aware: detecta backend (Spring) ou frontend (Vite) pelo cwd.",
+  "description": "Menthoros OpenSpec-first dev workflow: /implement, /qa, /ship plus reviewers and git guardrails. Context-aware: detects backend (Spring) or frontend (Vite) from the cwd.",
   "author": { "name": "Menthoros" },
   "license": "MIT"
 }
