@@ -1,0 +1,7 @@
+{
+  "name": "menthoros-workflow",
+  "version": "1.0.0",
+  "description": "Fluxo OpenSpec-first do Menthoros: /implement, /qa, /ship + reviewers e guardrails de git. Context-aware: detecta backend (Spring) ou frontend (Vite) pelo cwd.",
+  "author": { "name": "Menthoros" },
+  "license": "MIT"
+}

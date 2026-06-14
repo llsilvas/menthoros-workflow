@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "menthoros",
+  "version": "1.0.0",
+  "description": "Marketplace interno do Menthoros",
+  "owner": { "name": "Menthoros" },
+  "plugins": [
+    {
+      "name": "menthoros-workflow",
+      "description": "Fluxo OpenSpec-first: implement/qa/ship + reviewers + guardrails de git (backend Spring e frontend Vite).",
+      "source": "./",
+      "version": "1.0.0",
+      "category": "development"
+    }
+  ]
+}
