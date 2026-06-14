@@ -1,23 +1,25 @@
 # menthoros-workflow
 
-Plugin do Claude Code com o fluxo OpenSpec-first do Menthoros. **Context-aware**: os comandos e o
-gate detectam se o cwd é backend (Spring, `pom.xml`) ou frontend (Vite, `package.json`).
+Claude Code plugin with the Menthoros OpenSpec-first development workflow. **Context-aware**: the commands
+and the quality gate detect whether the cwd is backend (Spring, `pom.xml`) or frontend (Vite, `package.json`).
 
-## Conteúdo
-- **Comandos:** `/implement` (init de branch + task em TDD), `/qa` (reviewers + validação), `/ship` (merge --no-ff + archive + SPRINTS).
+> Tooling language vs output language: the plugin is in **English** (portable tooling), but the work it
+> produces (commits, code comments, responses) follows each repo's `CLAUDE.md`, which mandates **PT-BR**.
+
+## Contents
+- **Commands:** `/implement` (branch init + TDD task), `/qa` (reviewers + validation), `/ship` (merge --no-ff + archive + SPRINTS).
 - **Subagents:** `code-reviewer`, `security-reviewer` (backend), `frontend-reviewer`.
-- **Hooks:** `git-guard` (PreToolUse — bloqueia commit em develop, force-push, reset --hard, --no-verify), `qa-gate` (Stop — roda os testes do stack quando `src/` muda).
+- **Hooks:** `git-guard` (PreToolUse — blocks commit on develop, force-push, reset --hard, --no-verify), `qa-gate` (Stop — runs the stack's tests when `src/` changes).
 
-## Instalação (Claude Code CLI)
+## Install (Claude Code CLI)
 ```bash
-# marketplace local (uso imediato)
-/plugin marketplace add /caminho/para/menthoros-workflow
-# ou via repo no GitHub:  /plugin marketplace add <owner>/menthoros-workflow
+# local marketplace (immediate use)
+/plugin marketplace add /path/to/menthoros-workflow
+# or via a GitHub repo:  /plugin marketplace add <owner>/menthoros-workflow
 /plugin install menthoros-workflow
 ```
 
-## Migração (importante)
-Ao instalar o plugin, **remova os arquivos duplicados** de `.claude/` em cada repo para o hook não
-rodar duas vezes: `commands/{implement,qa,ship}.md`, `agents/*`, `hooks/{git-guard,qa-gate}.sh` e o
-bloco `"hooks"` de `.claude/settings.json` (preserve `enabledPlugins`, `mcpServers`, `permissions`).
-# menthoros-workflow
+## Migration note
+When installing the plugin, remove the duplicated `.claude/` files in each repo so the hooks do not run
+twice: `commands/{implement,qa,ship}.md`, `agents/*`, `hooks/{git-guard,qa-gate}.sh` and the `"hooks"`
+block in `.claude/settings.json` (keep `enabledPlugins`, `mcpServers`, `permissions`).
