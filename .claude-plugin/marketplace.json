@@ -3,13 +3,15 @@
   "name": "menthoros",
   "version": "1.0.0",
   "description": "Menthoros internal marketplace",
-  "owner": { "name": "Menthoros" },
+  "owner": {
+    "name": "Menthoros"
+  },
   "plugins": [
     {
       "name": "menthoros-workflow",
       "description": "OpenSpec-first workflow: implement/qa/ship + reviewers + git guardrails (Spring backend and Vite frontend).",
       "source": "./",
-      "version": "1.0.0",
+      "version": "1.6.0",
       "category": "development"
     }
   ]
