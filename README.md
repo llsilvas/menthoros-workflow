@@ -7,9 +7,9 @@ and the quality gate detect whether the cwd is backend (Spring, `pom.xml`) or fr
 > produces (commits, code comments, responses) follows each repo's `CLAUDE.md`, which mandates **PT-BR**.
 
 ## Contents
-- **Commands:** `/implement` (branch init + TDD task), `/qa` (reviewers + validation), `/ship` (merge --no-ff + archive + SPRINTS).
-- **Subagents:** `code-reviewer`, `security-reviewer` (backend), `frontend-reviewer`.
-- **Hooks:** `git-guard` (PreToolUse — blocks commit on develop, force-push, reset --hard, --no-verify), `qa-gate` (Stop — runs the stack's tests when `src/` changes).
+- **Commands:** `/change` (front of funnel: classify Tamanho/Trilha + create the OpenSpec change), `/implement` (3 modes: `init` branch · `<id> <task>` single TDD task · `run <id> [--step]` autonomous queue of all tasks, `--step` = pause per section), `/qa` (reviewers + validation), `/ship` (merge --no-ff + archive + SPRINTS).
+- **Subagents:** `spec-reviewer` (Definition-of-Ready gate, used in `/implement init`), `product-reviewer` (coach-centered product lens, in `/change`), `code-reviewer`, `security-reviewer`, `clean-code-reviewer` (SOLID/patterns), `frontend-reviewer`.
+- **Hooks:** `git-guard` (PreToolUse/Bash — blocks commit on develop, force-push, reset --hard, --no-verify), `migration-guard` (PreToolUse/Edit·Write — blocks destructive Flyway DDL: DROP TABLE / TRUNCATE / DROP COLUMN; override with `MENTHOROS_ALLOW_DESTRUCTIVE_MIGRATION=1`), `qa-gate` (Stop — runs the stack's tests when `src/` changes).
 
 ## Install (Claude Code CLI)
 ```bash
@@ -18,6 +18,16 @@ and the quality gate detect whether the cwd is backend (Spring, `pom.xml`) or fr
 # or via a GitHub repo:  /plugin marketplace add <owner>/menthoros-workflow
 /plugin install menthoros-workflow
 ```
+
+## Tests
+
+The hooks are the plugin's value — so they have a dependency-free regression suite (bash + git + python3):
+
+```bash
+bash tests/run.sh   # exit 0 = all green
+```
+
+Covers the `git-guard` block/allow matrix (commit on develop, force-push, reset --hard, --no-verify; vs. merge --no-ff, feature commits, non-git) and the `qa-gate` decision logic (skip when `src/` unchanged; backend vs frontend detection; failure -> exit 2) using stubbed `mvnw`/`npm`. Wire it into CI.
 
 ## Migration note
 When installing the plugin, remove the duplicated `.claude/` files in each repo so the hooks do not run
