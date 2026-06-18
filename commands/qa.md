@@ -6,8 +6,8 @@ category: workflow
 
 Detect the stack from the cwd and run the gate over the diff vs `develop`, in PARALLEL:
 
-- **Backend** (`pom.xml`): delegate to the `code-reviewer` and `security-reviewer` subagents; run `./mvnw clean test`.
-- **Frontend** (`package.json`): delegate to the `frontend-reviewer` subagent; run `npm run lint && npm run build && npm run test:run`.
+- **Backend** (`pom.xml`): delegate to the `code-reviewer`, `security-reviewer` and `clean-code-reviewer` subagents; run `./mvnw clean test`.
+- **Frontend** (`package.json`): delegate to the `frontend-reviewer` and `clean-code-reviewer` subagents; run `npm run lint && npm run build && npm run test:run`.
 
 (Reinforce with the native `/review` and `/security-review` if installed.)
 
