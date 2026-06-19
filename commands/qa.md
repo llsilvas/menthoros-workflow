@@ -11,5 +11,5 @@ Detect the stack from the cwd and run the gate over the diff vs `develop`, in PA
 
 (Reinforce with the native `/review` and `/security-review` if installed.)
 
-Consolidate a prioritized report (Critical / Important / Minor) with `file:line`. Do NOT merge (that is `/ship`).
+Consolidate a prioritized report (Critical / Important / Minor) with `file:line`. Do NOT merge (that is `/pr`).
 Approve only if everything is green and there is no Critical finding. Follow the repo's `CLAUDE.md` for conventions and output language (PT-BR).

@@ -18,4 +18,13 @@ if printf '%s' "$cmd" | grep -qE 'git +commit'; then
   { [ "$branch" = develop ] || [ "$branch" = main ] || [ "$branch" = master ]; } \
     && block "direct commit on '$branch' is not allowed — use feature/<change-id>."
 fi
+
+# local integration into a protected branch is not allowed — use a Pull Request (/pr)
+if printf '%s' "$cmd" | grep -qE 'git +merge'; then
+  { [ "$branch" = develop ] || [ "$branch" = main ] || [ "$branch" = master ]; } \
+    && block "local merge into '$branch' is not allowed — integrate via Pull Request (/pr)."
+fi
+if printf '%s' "$cmd" | grep -qE 'checkout +(develop|main|master)' && printf '%s' "$cmd" | grep -qE 'git +merge'; then
+  block "local integration into a protected branch is not allowed — use a Pull Request (/pr)."
+fi
 exit 0

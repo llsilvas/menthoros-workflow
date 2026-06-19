@@ -11,7 +11,7 @@
       "name": "menthoros-workflow",
       "description": "OpenSpec-first workflow: implement/qa/ship + reviewers + git guardrails (Spring backend and Vite frontend).",
       "source": "./",
-      "version": "1.6.0",
+      "version": "1.8.0",
       "category": "development"
     }
   ]

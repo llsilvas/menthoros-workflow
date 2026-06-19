@@ -28,4 +28,4 @@ Follow the repo's `CLAUDE.md` for conventions and output language (PT-BR).
    - **Pre-mortem (`the-fool`):** run a pre-mortem over the design ("how does this approach fail?") and
      fold the findings into "Riscos e mitigações".
 5. **Hand off** — report the change path and the next commands:
-   `/implement init <change-id>` -> `/implement run <change-id>` (add `--step` on Full) -> `/qa` -> `/ship <change-id>`.
+   `/implement init <change-id>` -> `/implement run <change-id>` (add `--step` on Full) -> `/qa` -> `/pr <change-id>` -> `/done <change-id>`.

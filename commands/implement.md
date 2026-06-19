@@ -20,7 +20,10 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
 3. Clean tree: if there are uncommitted changes, STOP and warn.
 4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
    (if the branch already exists, `checkout` it instead).
-5. Report the branch and the base commit.
+5. **Plan (refine `tasks.md` against the real code):** read `design.md` + `tasks.md` + the actual repo;
+   refine the change's `tasks.md` into a concrete execution plan — real sequence/dependencies + a
+   `verify:` line per task (how to know it worked). Keep `tasks.md` as the single source (no separate plan file).
+6. Report the branch, the base commit, and that the plan is ready for `run`.
 
 ## Mode B — `<change-id> <task-id>` (implement ONE task with TDD)
 
@@ -47,7 +50,7 @@ Work the change's `tasks.md` top to bottom, autonomously, on the already-created
    - Validate with the stack gate (backend `./mvnw clean test`; frontend `npm run lint && npm run build && npm run test:run`). **If it fails and you cannot fix the root cause within scope, STOP** — leave the task `[ ]`, report, and do not move to the next task.
    - On success: mark the task `[x]` in `tasks.md` and **commit per logical section** (Conventional Commits in PT-BR, on the feature branch) as a checkpoint.
 4. When the queue is done, run the **quality gate** (`/qa`): delegate `code-reviewer` + `security-reviewer` (backend) or `frontend-reviewer` (frontend), plus `clean-code-reviewer`, in parallel; consolidate a prioritized report.
-5. **STOP before shipping.** Do NOT merge or push to `develop`. Report the final status (tasks done/blocked, QA findings) and tell the user to run `/ship <change-id>` (explicit confirmation required; the git-guard hook blocks direct writes to `develop` anyway).
+5. **STOP before shipping.** Do NOT merge or push to `develop`. Report the final status (tasks done/blocked, QA findings) and tell the user to run `/pr <change-id>` (explicit confirmation required; the git-guard hook blocks direct writes to `develop` anyway).
 
 **Supervision — `--step`:** when called as `run <change-id> --step`, **pause for the user's confirmation at the end of each logical section** (right after its checkpoint commit) before starting the next — supervised autopilot. Without `--step`, run the whole queue and stop only on the semantic gates above (test failure, human-decision task, pre-ship). This is per **section**, never per task — per-task confirmation would just be Mode B with extra steps.
 

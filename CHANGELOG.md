@@ -3,6 +3,19 @@
 Todas as mudanças relevantes do `menthoros-workflow`. Formato: [Keep a Changelog](https://keepachangelog.com/),
 versionamento [SemVer](https://semver.org/).
 
+## [1.8.0] — 2026-06-18
+### Changed
+- **Renomeados para nomes mais intuitivos:** `/ship` → **`/pr`** (deixa claro que abre um Pull Request, não faz deploy) e `/land` → **`/done`** (finaliza pós-merge). `/change`, `/implement` e `/qa` mantidos.
+
+## [1.7.0] — 2026-06-13
+### Changed
+- **Fluxo PR-first:** `/ship` agora **abre um Pull Request** (`gh pr create`) em vez de mergear localmente —
+  `develop` é integrada só no remote (CI verde + branch protection).
+- `git-guard` passou a **bloquear merge local** na `develop`/`main` (integração só via PR).
+- `/implement init` ganhou um **passo de plano**: refina o `tasks.md` contra o código real, com `verify:` por task.
+### Added
+- Comando `/land`: pós-merge — arquiva a change, atualiza o `SPRINTS.md` e limpa a branch.
+
 ## [1.6.0] — 2026-06-13
 ### Added
 - Subagent `spec-reviewer`: **Definition-of-Ready** gate no `/implement init` (Full track) — barra spec

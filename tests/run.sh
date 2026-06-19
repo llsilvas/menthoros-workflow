@@ -36,12 +36,16 @@ gexpect "push -f to develop"        "git push -f origin develop"       feature/x
 gexpect "force-push while on main"  "git push --force"                 main      2
 gexpect "reset --hard"              "git reset --hard HEAD~1"          feature/x 2
 gexpect "commit --no-verify"        "git commit -m x --no-verify"      feature/x 2
+gexpect "merge local na develop (PR-only)" "git merge feature/x --no-ff -m m" develop   2
+
+echo "git-guard — integração local na protegida (PR-only):"
+gexpect "chained checkout develop + merge" "git checkout develop && git merge feature/x" feature/x 2
 
 echo "git-guard — must ALLOW (exit 0):"
 gexpect "status on develop"         "git status"                       develop   0
-gexpect "merge --no-ff on develop"  "git merge feature/x --no-ff -m m" develop   0
 gexpect "commit on feature"         "git commit -m x"                  feature/x 0
 gexpect "push feature (no force)"   "git push -u origin feature/x"     feature/x 0
+gexpect "merge develop into feature (update)" "git merge develop" feature/x 0
 gexpect "non-git command"           "./mvnw clean test"                develop   0
 gexpect "git log"                   "git log --oneline"                main      0
 
