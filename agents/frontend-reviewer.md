@@ -4,7 +4,7 @@ description: |
   Reviews Menthoros frontend code/diffs (React 19 / TS / MUI) against the CLAUDE.md.
   Use after implementing a task, before pushing. e.g.: "review this component", "is there business logic in the component?".
 tools: [Read, Grep, Glob, Bash]
-model: sonnet
+model: haiku
 ---
 
 Senior frontend reviewer for Menthoros (React 19, TS 5.8, Vite, MUI 7 + Emotion). Prioritized report

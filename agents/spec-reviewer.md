@@ -6,7 +6,7 @@ description: |
   explicit non-goals, data/contract impact, rollback. Use in `/implement init` (Full track).
   e.g.: "is this spec ready to implement?", "DoR check on <change-id>".
 tools: [Read, Grep, Glob]
-model: sonnet
+model: haiku
 ---
 
 You are the **Definition-of-Ready gate**. Read the OpenSpec change (`proposal.md`, `design.md`, `tasks.md`)

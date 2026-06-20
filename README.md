@@ -9,6 +9,8 @@ and the quality gate detect whether the cwd is backend (Spring, `pom.xml`) or fr
 ## Contents
 - **Commands:** `/change`, `/implement` (`init` → DoR + plan, `<id> <task>` TDD, `run [--step]` autopilot), `/qa`, `/pr` (opens a PR — no local merge), `/done` (post-merge: archive + SPRINTS + cleanup).
 - **Subagents:** `spec-reviewer` (Definition-of-Ready gate, used in `/implement init`), `product-reviewer` (coach-centered product lens, in `/change`), `code-reviewer`, `security-reviewer`, `clean-code-reviewer` (SOLID/patterns), `frontend-reviewer`.
+
+> **Model strategy (cost):** light, pattern/checklist reviewers run on **Haiku** (`clean-code-reviewer`, `frontend-reviewer`, `spec-reviewer`); deeper-judgment ones stay on **Sonnet** (`security-reviewer`, `code-reviewer`, `product-reviewer`). Hooks cost nothing (local shell).
 - **Hooks:** `git-guard` (PreToolUse/Bash — blocks commit on develop, force-push, reset --hard, --no-verify, and local merge into a protected branch), `migration-guard` (PreToolUse/Edit·Write — blocks destructive Flyway DDL: DROP TABLE / TRUNCATE / DROP COLUMN; override with `MENTHOROS_ALLOW_DESTRUCTIVE_MIGRATION=1`), `qa-gate` (Stop — runs the stack's tests when `src/` changes).
 
 ## Install (Claude Code CLI)

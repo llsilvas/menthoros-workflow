@@ -3,6 +3,11 @@
 Todas as mudanças relevantes do `menthoros-workflow`. Formato: [Keep a Changelog](https://keepachangelog.com/),
 versionamento [SemVer](https://semver.org/).
 
+## [1.8.1] — 2026-06-18
+### Changed
+- **Custo:** reviewers leves agora em **Haiku** (`clean-code-reviewer`, `frontend-reviewer`, `spec-reviewer`);
+  `security-reviewer`, `code-reviewer` e `product-reviewer` seguem em **Sonnet** (julgamento de maior risco/nuance).
+
 ## [1.8.0] — 2026-06-18
 ### Changed
 - **Renomeados para nomes mais intuitivos:** `/ship` → **`/pr`** (deixa claro que abre um Pull Request, não faz deploy) e `/land` → **`/done`** (finaliza pós-merge). `/change`, `/implement` e `/qa` mantidos.
