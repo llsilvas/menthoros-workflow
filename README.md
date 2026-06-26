@@ -12,14 +12,13 @@ and the quality gate detect whether the cwd is backend (Spring, `pom.xml`) or fr
 
 > **Model strategy — tiered review (reliability × cost).** Code review has asymmetric cost (a bug that slips
 > through costs far more than the review), so the model tier follows task type × consequence, not a global dial:
-> - **Cheap & frequent in the loop:** all reviewers currently run on **Haiku** (Sonnet is paused while the quota
->   is constrained). Catches the obvious early.
-> - **Strong & rare at the gate:** an independent **cross-model Codex pass** in `/qa` (`/codex:review`, plus
+> - **Haiku — loop / checklist (cheap):** `frontend-reviewer` and `spec-reviewer`.
+> - **Sonnet — judgment / consequence:** `security-reviewer` (authz / tenant isolation / OWASP),
+>   `code-reviewer` (N+1, multi-tenancy, JPA), `clean-code-reviewer` (SOLID / design) and `product-reviewer`
+>   (value / coach lens, in `/change`). Never Opus — Sonnet is the ceiling here.
+> - **Codex — cross-model at the gate:** an independent pass in `/qa` (`/codex:review`, plus
 >   `/codex:adversarial-review` on Full/high-risk) — runs on the OpenAI account, **outside the Claude budget**.
 >   Claude+Codex agreement is the strong signal.
-> - **Target matrix (re-enable when the Sonnet quota returns):** keep `spec-reviewer` + `frontend-reviewer`
->   (loop) on **Haiku**; raise `code-reviewer`, `clean-code-reviewer`, `product-reviewer` to **Sonnet**; raise
->   `security-reviewer` to **Sonnet/Opus** (highest consequence — never Haiku at the gate).
 >
 > Hooks cost nothing (local shell).
 - **Hooks:** `git-guard` (PreToolUse/Bash — blocks commit on develop, force-push, reset --hard, --no-verify, and local merge into a protected branch), `migration-guard` (PreToolUse/Edit·Write — blocks destructive Flyway DDL: DROP TABLE / TRUNCATE / DROP COLUMN; override with `MENTHOROS_ALLOW_DESTRUCTIVE_MIGRATION=1`), `qa-gate` (Stop — runs the stack's tests when `src/` changes).

@@ -4,7 +4,7 @@ description: |
   Reviews Menthoros backend code/diffs (Java 21 / Spring Boot) against the CLAUDE.md.
   Use after implementing a task, before pushing. e.g.: "review this diff", "check for N+1 or multi-tenancy leaks".
 tools: [Read, Grep, Glob, Bash]
-model: haiku
+model: sonnet
 ---
 
 Senior reviewer for the Menthoros backend. Prioritized report (Critical / Important / Minor), `file:line` + fix.
