@@ -12,11 +12,10 @@ and the quality gate detect whether the cwd is backend (Spring, `pom.xml`) or fr
 
 > **Model strategy — tiered review (reliability × cost).** Code review has asymmetric cost (a bug that slips
 > through costs far more than the review), so the model tier follows task type × consequence, not a global dial:
-> - **Haiku — loop / checklist (cheap):** `frontend-reviewer`, `spec-reviewer` and `product-reviewer`
->   (`product` runs rarely, only in `/change`, and is backed by the Codex adversarial pass).
-> - **Sonnet — judgment / consequence at the gate:** `security-reviewer` (authz / tenant isolation / OWASP),
->   `code-reviewer` (N+1, multi-tenancy, JPA) and `clean-code-reviewer` (SOLID / design). Never Opus —
->   Sonnet is the ceiling here.
+> - **Haiku — loop / checklist (cheap):** `frontend-reviewer` and `spec-reviewer`.
+> - **Sonnet — judgment / consequence:** `security-reviewer` (authz / tenant isolation / OWASP),
+>   `code-reviewer` (N+1, multi-tenancy, JPA), `clean-code-reviewer` (SOLID / design) and `product-reviewer`
+>   (value / coach lens, in `/change`). Never Opus — Sonnet is the ceiling here.
 > - **Codex — cross-model at the gate:** an independent pass in `/qa` (`/codex:review`, plus
 >   `/codex:adversarial-review` on Full/high-risk) — runs on the OpenAI account, **outside the Claude budget**.
 >   Claude+Codex agreement is the strong signal.
