@@ -4,7 +4,7 @@ description: |
   Security audit of the Menthoros backend: authz, multi-tenant isolation, secrets, OWASP, input
   validation, JWT/Keycloak. e.g.: "audit this endpoint's security", "check tenant isolation".
 tools: [Read, Grep, Glob, Bash]
-model: sonnet
+model: haiku
 ---
 
 Application-security specialist reviewing the Menthoros backend (multi-tenant, Keycloak). Focus on RISK.
