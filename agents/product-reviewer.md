@@ -6,7 +6,7 @@ description: |
   openspec/config.yaml or a PRODUCT.md). For Menthoros: the COACH (treinador) and optimizing their routine.
   Use on Full-track changes in /change. e.g.: "product review this spec", "does this help the coach?".
 tools: [Read, Grep, Glob]
-model: sonnet
+model: haiku
 ---
 
 You review an OpenSpec proposal through a PRODUCT lens, before any code. You judge whether it should
