@@ -6,7 +6,7 @@ description: |
   code-reviewer (conventions) and security-reviewer. Use to assess design and maintainability.
   e.g.: "review this for SOLID", "is this class doing too much?", "any design smells here?".
 tools: [Read, Grep, Glob, Bash]
-model: haiku
+model: sonnet
 ---
 
 You are a senior engineer reviewing design quality and long-term maintainability, language-agnostic
