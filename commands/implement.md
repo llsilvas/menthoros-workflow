@@ -14,9 +14,14 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
 
 1. Resolve `<change-id>` (the OpenSpec spec name): validate via `openspec show <change-id>` or
    `menthoros-product/openspec/changes/<change-id>/`. If omitted, list the active changes and ask the user to pick.
-2. **Definition of Ready (Full track):** run the `spec-reviewer` over the change. If the verdict is
-   **NOT READY**, STOP and report the gaps — do not open a branch for an unready spec. (Fast track: just
-   confirm there is at least one testable acceptance criterion.)
+2. **Definition of Ready (Full track):** run the `spec-reviewer` over the change. In parallel, when the
+   `codex` plugin is installed, run an independent cross-model pass with
+   `/codex:adversarial-review --cwd menthoros-product/openspec/changes/<change-id>` (outside the Claude
+   quota) — it challenges the proposal's assumptions, tradeoffs and design choices instead of just checking
+   DoR boxes. Consolidate both: a gap flagged by **both** Claude and Codex is a strong signal (raise its
+   priority); where they diverge, investigate before dismissing. If either verdict is **NOT READY** / surfaces
+   a Critical gap, STOP and report the gaps — do not open a branch for an unready spec. (Fast track: just
+   confirm there is at least one testable acceptance criterion; the Codex pass is optional.)
 3. Clean tree: if there are uncommitted changes, STOP and warn.
 4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
    (if the branch already exists, `checkout` it instead).
