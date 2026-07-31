@@ -14,14 +14,29 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
 
 1. Resolve `<change-id>` (the OpenSpec spec name): validate via `openspec show <change-id>` or
    `menthoros-product/openspec/changes/<change-id>/`. If omitted, list the active changes and ask the user to pick.
-2. **Definition of Ready (Full track):** run the `spec-reviewer` over the change. In parallel, when the
-   `codex` plugin is installed, run an independent cross-model pass with
-   `/codex:adversarial-review --cwd menthoros-product/openspec/changes/<change-id>` (outside the Claude
-   quota) — it challenges the proposal's assumptions, tradeoffs and design choices instead of just checking
-   DoR boxes. Consolidate both: a gap flagged by **both** Claude and Codex is a strong signal (raise its
-   priority); where they diverge, investigate before dismissing. If either verdict is **NOT READY** / surfaces
-   a Critical gap, STOP and report the gaps — do not open a branch for an unready spec. (Fast track: just
-   confirm there is at least one testable acceptance criterion; the Codex pass is optional.)
+2. **Definition of Ready:** run the `spec-reviewer` over the change. In parallel, run an independent
+   cross-model pass with **Codex** over the spec (outside the Claude quota) — it challenges the proposal's
+   assumptions, tradeoffs and design choices instead of just checking DoR boxes. Consolidate both: a gap
+   flagged by **both** Claude and Codex is a strong signal (raise its priority); where they diverge,
+   investigate before dismissing. If either verdict is **NOT READY** / surfaces a Critical gap, STOP and
+   report the gaps — do not open a branch for an unready spec.
+
+   **The Codex pass is mandatory on every track, Fast included.** It used to be optional on Fast, and the
+   record killed that: on `add-coach-settings-page` (XS · Fast) it caught a **blocker** — an acceptance
+   criterion describing a flow that the previously-merged change had made unreachable, because the layout
+   gate returns before the `Outlet`. Two Claude reviewers and the author had missed it. Across this
+   workstream Codex has rejected the DoR every time it ran, always with a real finding. Size is a poor
+   proxy for "the spec is right": a small change built on top of a fresh one is exactly where stale
+   assumptions hide.
+
+   **Fast track still skips the rest** — no `design.md` required, no reviewer battery. Only the Codex pass
+   and the testable-acceptance-criteria check are non-negotiable.
+
+   **Invocation:** `/codex:adversarial-review` when the plugin command is reachable; otherwise
+   `codex exec` with the spec paths. Ask for a verdict and a word cap — unbounded prompts make it echo
+   file contents instead of reviewing. Always verify a finding against the code before accepting it: one
+   claim per review has been wrong so far, and accepting it would have written a false rationale into the
+   repo permanently.
 3. Clean tree: if there are uncommitted changes, STOP and warn.
 4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
    (if the branch already exists, `checkout` it instead).
