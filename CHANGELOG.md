@@ -3,6 +3,12 @@
 Todas as mudanças relevantes do `menthoros-workflow`. Formato: [Keep a Changelog](https://keepachangelog.com/),
 versionamento [SemVer](https://semver.org/).
 
+## [1.8.2] — 2026-09-03
+### Fixed
+- **Carga do plugin:** `hooks/hooks.json` agora envolve os eventos num objeto `"hooks"`, formato exigido pelo
+  Claude Code atual. Sem isso o plugin falhava ao carregar e `/implement`, `/qa`, `/pr` e `/done` caíam nas
+  skills homônimas de `~/.claude/skills`.
+
 ## [1.8.1] — 2026-06-18
 ### Changed
 - **Custo:** reviewers leves agora em **Haiku** (`clean-code-reviewer`, `frontend-reviewer`, `spec-reviewer`);

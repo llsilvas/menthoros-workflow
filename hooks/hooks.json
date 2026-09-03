@@ -1,32 +1,35 @@
 {
-  "PreToolUse": [
-    {
-      "matcher": "Bash",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/git-guard.sh\""
-        }
-      ]
-    },
-    {
-      "matcher": "Edit|Write|MultiEdit",
-      "hooks": [
-        {
-          "type": "command",
-          "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/migration-guard.sh\""
-        }
-      ]
-    }
-  ],
-  "Stop": [
-    {
-      "hooks": [
-        {
-          "type": "command",
-          "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/qa-gate.sh\""
-        }
-      ]
-    }
-  ]
+  "description": "Guardrails do workflow Menthoros: git, migrations Flyway e gate de QA.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/git-guard.sh\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/migration-guard.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/qa-gate.sh\""
+          }
+        ]
+      }
+    ]
+  }
 }
