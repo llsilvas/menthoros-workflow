@@ -3,6 +3,17 @@
 Todas as mudanças relevantes do `menthoros-workflow`. Formato: [Keep a Changelog](https://keepachangelog.com/),
 versionamento [SemVer](https://semver.org/).
 
+## [1.9.0] — 2026-09-18
+### Added
+- `scripts/deepseek-review.sh`: cross-model review via a DeepSeek API (`review`/`adversarial` modes),
+  used as **fallback** for `/codex:review` and `/codex:adversarial-review` in `/qa` and `/implement init`
+  when the Codex CLI/plugin is unreachable — the gate always keeps a second model, never silently
+  degrades to Claude-only. Needs `DEEPSEEK_API_KEY` (see `.env.example`).
+### Fixed
+- **Docs vs reality:** README's "Haiku — loop/checklist" tier claimed `frontend-reviewer` and
+  `spec-reviewer` run on Haiku; both drifted to Sonnet across version-bump commits (`053588c`, `3a2b909`)
+  with no decision record. README now states the actual live model per agent instead of the stale target.
+
 ## [1.8.2] — 2026-09-03
 ### Fixed
 - **Carga do plugin:** `hooks/hooks.json` agora envolve os eventos num objeto `"hooks"`, formato exigido pelo

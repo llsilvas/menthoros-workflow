@@ -37,6 +37,11 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
    file contents instead of reviewing. Always verify a finding against the code before accepting it: one
    claim per review has been wrong so far, and accepting it would have written a false rationale into the
    repo permanently.
+
+   **Codex unreachable — DeepSeek fallback.** If Codex is not reachable at all (CLI missing/unauthenticated),
+   run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/deepseek-review.sh" adversarial --base develop --cwd <repo>`
+   instead of skipping the pass — needs `DEEPSEEK_API_KEY` in the environment or a `.env` above the repo.
+   Same verification discipline as the Codex pass: verdict + word cap, check every finding against the code.
 3. Clean tree: if there are uncommitted changes, STOP and warn.
 4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
    (if the branch already exists, `checkout` it instead).
