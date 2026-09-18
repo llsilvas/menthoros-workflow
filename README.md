@@ -48,7 +48,7 @@ The hooks are the plugin's value — so they have a dependency-free regression s
 bash tests/run.sh   # exit 0 = all green
 ```
 
-Covers the `git-guard` block/allow matrix (commit on develop, force-push, reset --hard, --no-verify; vs. merge --no-ff, feature commits, non-git) and the `qa-gate` decision logic (skip when `src/` unchanged; backend vs frontend detection; failure -> exit 2) using stubbed `mvnw`/`npm`. Wire it into CI.
+Covers the `git-guard` block/allow matrix (commit on develop, force-push, reset --hard, --no-verify; vs. merge --no-ff, feature commits, non-git), the `qa-gate` decision logic (skip when `src/` unchanged; backend vs frontend detection; failure -> exit 2) using stubbed `mvnw`/`npm`, `deepseek-review.sh` argument/preflight validation, and `tests/validate-manifests.py` — a **regression guard for the exact 1.8.2 failure**: when `hooks.json` isn't wrapped in a top-level `"hooks"` key (or `plugin.json`/`marketplace.json` versions drift apart), the plugin fails to load and `/implement`/`/qa`/`/pr`/`/done` silently fall through to any globally-installed skill of the same name (e.g. `mattpocock/skills`' generic `implement`/`qa`) instead of erroring. Wired into CI.
 
 ## Migration note
 When installing the plugin, remove the duplicated `.claude/` files in each repo so the hooks do not run

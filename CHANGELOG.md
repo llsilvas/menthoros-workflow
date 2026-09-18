@@ -3,6 +3,17 @@
 Todas as mudanças relevantes do `menthoros-workflow`. Formato: [Keep a Changelog](https://keepachangelog.com/),
 versionamento [SemVer](https://semver.org/).
 
+## [1.9.1] — 2026-09-18
+### Added
+- `tests/validate-manifests.py`: regression guard for the 1.8.2 failure class — checks `hooks.json` has
+  the top-level `"hooks"` wrapper (and its script paths exist) and that `plugin.json`/`marketplace.json`
+  versions match. Without a manifest guard, a broken plugin load makes `/implement`/`/qa`/`/pr`/`/done`
+  fall through *silently* to any globally-installed skill sharing the name (e.g. `mattpocock/skills`'
+  generic `implement`/`qa`, present in this environment at `~/.agents/skills/`) instead of erroring —
+  wrong logic runs with no signal that the plugin didn't load. Wired into `tests/run.sh` and CI, replacing
+  the CI step that only checked JSON *syntax* (the 1.8.2 file was syntactically valid, just structurally
+  wrong).
+
 ## [1.9.0] — 2026-09-18
 ### Added
 - `scripts/deepseek-review.sh`: cross-model review via a DeepSeek API (`review`/`adversarial` modes),
