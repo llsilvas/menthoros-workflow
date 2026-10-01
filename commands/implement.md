@@ -45,11 +45,15 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
 3. Clean tree: if there are uncommitted changes, STOP and warn.
 4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
    (if the branch already exists, `checkout` it instead).
-5. **Kanban do vault:** move o card `<change-id>` de **🔴 A Fazer** para **🏃 Fazendo** em
-   `/Volumes/MenthorosVault/10-Product/Kanban - Menthoros.md` (Kanban plugin do Obsidian — cada card é
-   um `- [ ] \`change-id\` ...` + linha de descrição indentada; mover é cortar o bloco inteiro de uma
-   seção `##` para a outra, preservando o texto). Se o vault não estiver montado, avisar e seguir sem
-   bloquear o resto do fluxo.
+5. **Kanban do `menthoros-brain`:** move o card `<change-id>` de **🔴 A Fazer** para **🏃 Fazendo** em
+   `menthoros-brain/10-Product/Kanban - Menthoros.md` — repo irmão dentro do workspace (remote
+   `llsilvas/menthoros-brain.git`, branch `master`; não confundir com `/Volumes/MenthorosVault`, o share
+   SMB do homelab com o mesmo conteúdo mas sem histórico git). Commit por path explícito (ver regra de
+   sessão paralela do `CLAUDE.md` raiz — este repo de notas tem o mesmo risco do `menthoros-product`:
+   todas as sessões na mesma branch, sem worktree). Kanban plugin do Obsidian — cada card é um
+   `- [ ] \`change-id\` ...` + linha de descrição indentada; mover é cortar o bloco inteiro de uma seção
+   `##` para a outra, preservando o texto. Se o repo não estiver clonado, avisar e seguir sem bloquear o
+   resto do fluxo.
 6. **Plan (refine `tasks.md` against the real code):** read `design.md` + `tasks.md` + the actual repo;
    refine the change's `tasks.md` into a concrete execution plan — real sequence/dependencies + a
    `verify:` line per task (how to know it worked). Keep `tasks.md` as the single source (no separate plan file).
