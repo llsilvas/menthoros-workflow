@@ -45,10 +45,15 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
 3. Clean tree: if there are uncommitted changes, STOP and warn.
 4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
    (if the branch already exists, `checkout` it instead).
-5. **Plan (refine `tasks.md` against the real code):** read `design.md` + `tasks.md` + the actual repo;
+5. **Kanban do vault:** move o card `<change-id>` de **🔴 A Fazer** para **🏃 Fazendo** em
+   `/Volumes/MenthorosVault/10-Product/Kanban - Menthoros.md` (Kanban plugin do Obsidian — cada card é
+   um `- [ ] \`change-id\` ...` + linha de descrição indentada; mover é cortar o bloco inteiro de uma
+   seção `##` para a outra, preservando o texto). Se o vault não estiver montado, avisar e seguir sem
+   bloquear o resto do fluxo.
+6. **Plan (refine `tasks.md` against the real code):** read `design.md` + `tasks.md` + the actual repo;
    refine the change's `tasks.md` into a concrete execution plan — real sequence/dependencies + a
    `verify:` line per task (how to know it worked). Keep `tasks.md` as the single source (no separate plan file).
-6. Report the branch, the base commit, and that the plan is ready for `run`.
+7. Report the branch, the base commit, and that the plan is ready for `run`.
 
 ## Mode B — `<change-id> <task-id>` (implement ONE task with TDD)
 
