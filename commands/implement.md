@@ -10,7 +10,10 @@ The repo's `CLAUDE.md` is the canonical source of rules — follow it, including
 
 ## Mode A — `init <change-id>` (prepare the branch)
 
-Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md` (pattern `feature/<change-id>`):
+Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md` (pattern `<tipo>/<change-id>`,
+where `<tipo>` is the Conventional Commits type — `feat`/`fix`/`refactor`/`test`/`docs`/`chore` — that
+dominates this change's scope; read `proposal.md`'s "What Changes" to decide, and ask the user if it's
+genuinely ambiguous):
 
 1. Resolve `<change-id>` (the OpenSpec spec name): validate via `openspec show <change-id>` or
    `menthoros-product/openspec/changes/<change-id>/`. If omitted, list the active changes and ask the user to pick.
@@ -43,8 +46,9 @@ Do not implement anything. Follow the "Diretrizes de Git" in the root `CLAUDE.md
    instead of skipping the pass — needs `DEEPSEEK_API_KEY` in the environment or a `.env` above the repo.
    Same verification discipline as the Codex pass: verdict + word cap, check every finding against the code.
 3. Clean tree: if there are uncommitted changes, STOP and warn.
-4. `git checkout develop && git pull origin develop && git checkout -b feature/<change-id>`
-   (if the branch already exists, `checkout` it instead).
+4. `git checkout develop && git pull origin develop && git checkout -b <tipo>/<change-id>`
+   (if a branch already exists for this `<change-id>` — check `git branch --list '*/<change-id>'` — `checkout`
+   it instead, regardless of which `<tipo>` it was created with).
 5. **Kanban do `menthoros-brain`:** move o card `<change-id>` de **🔴 A Fazer** para **🏃 Fazendo** em
    `menthoros-brain/10-Product/Kanban - Menthoros.md` — repo irmão dentro do workspace (remote
    `llsilvas/menthoros-brain.git`, branch `master`; não confundir com `/Volumes/MenthorosVault`, o share
@@ -76,13 +80,14 @@ The branch must already exist (Mode A). Never `--no-verify` / `@SuppressWarnings
 
 Work the change's `tasks.md` top to bottom, autonomously, on the already-created branch — but stop the moment something can't be resolved safely.
 
-1. **Precondition:** the branch `feature/<change-id>` must exist (Mode A). If not, STOP and tell the user to run `/implement init <change-id>`.
+1. **Precondition:** a branch matching `*/<change-id>` must exist (Mode A) — check with
+   `git branch --list '*/<change-id>'`. If not, STOP and tell the user to run `/implement init <change-id>`.
 2. Read `tasks.md` and build an ordered queue of the **unchecked** (`[ ]`) tasks. Mirror the queue with TodoWrite so progress is visible.
 3. For each task, in order:
    - **If it needs a human decision** — a product/scope call, an external dependency to confirm, anything phrased "decidir/confirmar", branch creation, or a destructive op — **PAUSE and ask**. Never guess.
    - Otherwise implement it with the **Mode B TDD flow** and the repo Standards.
    - Validate with the stack gate (backend `./mvnw clean test`; frontend `npm run lint && npm run build && npm run test:run`). **If it fails and you cannot fix the root cause within scope, STOP** — leave the task `[ ]`, report, and do not move to the next task.
-   - On success: mark the task `[x]` in `tasks.md` and **commit per logical section** (Conventional Commits in PT-BR, on the feature branch) as a checkpoint.
+   - On success: mark the task `[x]` in `tasks.md` and **commit per logical section** (Conventional Commits in PT-BR, on the change's branch) as a checkpoint.
 4. When the queue is done, run the **quality gate** (`/qa`): delegate `code-reviewer` + `security-reviewer` (backend) or `frontend-reviewer` (frontend), plus `clean-code-reviewer`, in parallel; consolidate a prioritized report.
 5. **STOP before shipping.** Do NOT merge or push to `develop`. Report the final status (tasks done/blocked, QA findings) and tell the user to run `/pr <change-id>` (explicit confirmation required; the git-guard hook blocks direct writes to `develop` anyway).
 

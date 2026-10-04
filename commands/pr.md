@@ -10,10 +10,11 @@ integrated only via a merged PR on the remote (CI green + branch protection).
 
 **Preconditions:** `tasks.md` items `[x]`; local suite green (`./mvnw clean test` / `npm run lint && build && test:run`); `/qa` with no Critical finding.
 
-1. Push the branch: `git push -u origin feature/<change-id>`.
+1. Find the local branch for this change (`git branch --list '*/<change-id>'` — prefix is the
+   dominant Conventional Commits type, e.g. `refactor/<change-id>`) and push it: `git push -u origin <branch>`.
 2. Open the PR (GitHub CLI):
    ```
-   gh pr create --base develop --head feature/<change-id> \
+   gh pr create --base develop --head <branch> \
      --title "<change-id>: <resumo>" \
      --body "<resumo + critérios de aceite atendidos + validação executada + link da spec OpenSpec>"
    ```
