@@ -31,6 +31,15 @@ The Claude reviewers above run on **Haiku** (cheap). To catch the blind spots a 
 they diverge, investigate before dismissing. This is the cheap reliability lever while the deeper Claude tiers
 (Sonnet/Opus) are constrained by quota.
 
+**Codex unreachable — DeepSeek fallback.** If neither `/codex:*` nor `codex exec` is reachable (CLI not
+installed, not authenticated, or errors out), do NOT silently skip the cross-model pass — run
+`bash "${CLAUDE_PLUGIN_ROOT}/scripts/deepseek-review.sh" review --base develop --cwd <repo>` (add
+`adversarial` instead of `review` for the Full-track/high-risk case) instead. It needs `DEEPSEEK_API_KEY` in
+the environment or a `.env` above the repo. Same discipline as Codex: cap the words (the script already
+does, `--max-words` to change it), never accept a finding without checking it against the code, and treat
+Claude+DeepSeek agreement as a strong signal exactly like Claude+Codex. This keeps a second model in the
+gate at all times — Codex first, DeepSeek only when Codex is down, never both by default (cost/latency).
+
 (Also reinforce with the native `/review` and `/security-review` if installed.)
 
 Consolidate a prioritized report (Critical / Important / Minor) with `file:line`, merging the Claude and Codex

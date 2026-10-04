@@ -5,6 +5,7 @@
 # =============================================================================
 set -uo pipefail
 HOOKS="$(cd "$(dirname "$0")/../hooks" && pwd)"
+SCRIPTS="$(cd "$(dirname "$0")/../scripts" && pwd)"
 pass=0; fail=0
 ok(){ printf "  ok   %s\n" "$1"; pass=$((pass+1)); }
 ko(){ printf "  FAIL %s (exit %s, want %s)\n" "$1" "$2" "$3"; fail=$((fail+1)); }
@@ -103,6 +104,25 @@ echo "migration-guard — must ALLOW (exit 0):"
 qexpect "CREATE TABLE migration"   "$(mguard "$(mwrite "$MIG" 'CREATE TABLE tb_new (id uuid);')")" 0
 qexpect "DROP in non-migration"    "$(mguard "$(mwrite "src/Foo.java" 'DROP TABLE x;')")"   0
 qexpect "destructive + override"   "$(mguard "$(mwrite "$MIG" 'DROP TABLE x;')" "MENTHOROS_ALLOW_DESTRUCTIVE_MIGRATION=1")" 0
+
+# ---- deepseek-review: argument validation and preflight checks (no network) ----
+dsreview(){ # $1..=args -> exit code (isolated from the real DEEPSEEK_API_KEY / any .env)
+  ( unset DEEPSEEK_API_KEY; cd /tmp && bash "$SCRIPTS/deepseek-review.sh" "$@" >/dev/null 2>&1 )
+  echo $?
+}
+
+echo "deepseek-review — argument/preflight validation:"
+qexpect "no mode -> usage error"       "$(dsreview)"                                   64
+qexpect "unknown mode -> usage error"  "$(dsreview bogus)"                              64
+qexpect "unknown flag -> usage error"  "$(dsreview review --nope x)"                    64
+qexpect "missing cwd -> not found"     "$(dsreview review --cwd /no/such/dir)"          66
+d="$(mktemp -d)"; qexpect "no API key, no .env -> missing key" "$(dsreview review --cwd "$d")" 69; rm -rf "$d"
+
+# ---- plugin manifest — must be loadable (regression guard for the 1.8.2 fallback bug) ----
+echo "plugin manifest — must be valid & loadable:"
+python3 "$(dirname "$0")/validate-manifests.py" >/dev/null 2>&1
+manifests_rc=$?
+qexpect "hooks.json/plugin.json/marketplace.json valid" "$manifests_rc" 0
 
 echo
 echo "==== $pass passed, $fail failed ===="
