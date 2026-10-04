@@ -30,11 +30,12 @@ if printf '%s' "$cmd" | grep -qE 'git +push' && printf '%s' "$cmd" | grep -qE --
     && block "force-push to a protected branch requires explicit confirmation."
 fi
 printf '%s' "$cmd" | grep -qE 'git +reset +--hard' && block "git reset --hard requires explicit confirmation."
-# menthoros-product (specs) e menthoros-workflow (este plugin) trabalham direto em master, por
-# decisão do CLAUDE.md da raiz — não têm develop nem feature branch. Só neles o commit em master passa.
+# menthoros-product (specs), menthoros-workflow (este plugin) e menthoros-brain (notas/kanban)
+# trabalham direto em master, por decisão do CLAUDE.md da raiz — não têm develop nem feature
+# branch. Só neles o commit em master passa.
 repo="$(basename "$repo_toplevel")"
 master_only_repo=0
-case "$repo" in menthoros-product|menthoros-workflow) master_only_repo=1 ;; esac
+case "$repo" in menthoros-product|menthoros-workflow|menthoros-brain) master_only_repo=1 ;; esac
 if printf '%s' "$cmd" | grep -qE 'git +commit'; then
   { [ "$branch" = develop ] || [ "$branch" = main ] || { [ "$branch" = master ] && [ "$master_only_repo" = 0 ]; }; } \
     && block "direct commit on '$branch' is not allowed — use feature/<change-id>."
