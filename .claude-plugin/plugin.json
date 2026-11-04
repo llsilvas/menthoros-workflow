@@ -1,6 +1,6 @@
 {
   "name": "menthoros-workflow",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "Menthoros OpenSpec-first dev workflow: /implement, /qa, /ship plus reviewers and git guardrails. Context-aware: detects backend (Spring) or frontend (Vite) from the cwd.",
   "author": {
     "name": "Menthoros"

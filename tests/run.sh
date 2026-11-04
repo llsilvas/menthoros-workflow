@@ -50,6 +50,57 @@ gexpect "merge develop into feature (update)" "git merge develop" feature/x 0
 gexpect "non-git command"           "./mvnw clean test"                develop   0
 gexpect "git log"                   "git log --oneline"                main      0
 
+# ---- git-guard: troca de branch no worktree principal de repo com develop ----
+# $1=descrição $2=comando (REPO vira o path do repo) $3=modo $4=exit esperado
+#   main  -> hook roda no worktree principal (em develop, com branch feat/x e src/a.java)
+#   wt    -> hook roda num worktree secundário do mesmo repo
+#   nodev -> repo sem develop (classe master-only: product, workflow, brain, infra)
+#   out   -> hook roda fora de qualquer repo (o comando aponta o repo por cd/-C)
+bguard(){
+  local r w o json rc
+  r="$(newrepo develop)"; mkdir -p "$r/src"; echo a > "$r/src/a.java"
+  git -C "$r" add . && git -C "$r" commit -q -m s && git -C "$r" branch feat/x
+  w="$(mktemp -d)/wt"; git -C "$r" worktree add -q "$w" -b feat/y 2>/dev/null
+  o="$(mktemp -d)"
+  if [ "$3" = nodev ]; then git -C "$r" branch -q -m develop master; fi
+  git -C "$r" update-ref refs/remotes/origin/feat/rem HEAD
+  # prefixo CWD: -> o JSON leva "cwd" = repo, como o harness manda; o processo do hook roda fora dele
+  json="$(python3 -c 'import json,sys
+c=sys.argv[1].replace("REPO",sys.argv[2]); d={"tool_input":{"command":c}}
+if c.startswith("CWD:"): d={"tool_input":{"command":c[4:]},"cwd":sys.argv[2]}
+print(json.dumps(d))' "$2" "$r")"
+  case "$3" in wt) cd_to="$w" ;; out) cd_to="$o" ;; *) cd_to="$r" ;; esac
+  ( cd "$cd_to" && printf '%s' "$json" | bash "$HOOKS/git-guard.sh" >/dev/null 2>&1 ); rc=$?
+  rm -rf "$r" "$(dirname "$w")" "$o"; echo $rc
+}
+bexpect(){ local got; got="$(bguard "$1" "$2" "$3")"; [ "$got" = "$4" ] && ok "$1" || ko "$1" "$got" "$4"; }
+
+echo "git-guard — troca de branch no principal: must BLOCK (exit 2):"
+bexpect "checkout -b no principal"        "git checkout -b feat/z"                 main 2
+bexpect "checkout -B no principal"        "git checkout -B feat/z"                 main 2
+bexpect "checkout de branch no principal" "git checkout feat/x"                    main 2
+bexpect "switch no principal"             "git switch feat/x"                      main 2
+bexpect "switch -c no principal"          "git switch -c feat/z"                   main 2
+bexpect "cd <repo> && checkout -b"        "cd REPO && git checkout -b feat/z"      out  2
+bexpect "git -C <repo> checkout -b"       "git -C REPO checkout -b feat/z"         out  2
+bexpect "git -c k=v checkout"             "git -c core.x=y checkout feat/x"        main 2
+bexpect "git --no-pager checkout"         "git --no-pager checkout feat/x"         main 2
+bexpect "flags combinadas -qb"            "git checkout -qb feat/z"                main 2
+bexpect "branch só remota (DWIM)"         "git checkout feat/rem"                  main 2
+bexpect "-C por segmento"                 "git -C /tmp status && git -C REPO checkout -b q" out 2
+bexpect "git -C <repo> commit em develop" "git -C REPO commit -m x"                out  2
+bexpect "cwd do JSON (hook fora do repo)" "CWD:git checkout -b feat/z"             out  2
+
+echo "git-guard — troca de branch: must ALLOW (exit 0):"
+bexpect "checkout -- arquivo"             "git checkout -- src/a.java"             main 0
+bexpect "checkout ref -- arquivo"         "git checkout HEAD -- src/a.java"        main 0
+bexpect "checkout arquivo sem --"         "git checkout src/a.java"                main 0
+bexpect "restore"                         "git restore src/a.java"                 main 0
+bexpect "checkout no worktree secundário" "git checkout feat/x"                    wt   0
+bexpect "repo sem develop (master-only)"  "git checkout -b docs/x"                 nodev 0
+bexpect "worktree add no principal"       "git worktree add ../w -b feat/z"        main 0
+bexpect "-C por segmento (checkout fora)" "git -C REPO status && git -C /tmp checkout -b q" out 0
+
 # ---- qa-gate: decision logic with stubbed mvnw/npm ----
 qagate(){ # $1=projectdir -> exit code (PATH may be augmented by caller via $2)
   ( cd "$1" && CLAUDE_PROJECT_DIR="$1" PATH="${2:-$PATH}" bash "$HOOKS/qa-gate.sh" >/dev/null 2>&1 )
