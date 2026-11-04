@@ -3,6 +3,22 @@
 Todas as mudanças relevantes do `menthoros-workflow`. Formato: [Keep a Changelog](https://keepachangelog.com/),
 versionamento [SemVer](https://semver.org/).
 
+## [1.10.0] — 2026-11-04
+### Changed
+- `/implement init` creates a **git worktree per change** (`<workspace>/.worktrees/<repo>-<change-id>`, from
+  `origin/develop`, or on the existing branch) and `cd`s into it, instead of `git checkout -b` in the repo's
+  main directory. HEAD belongs to the directory, not the session: the checkout switched the branch of every
+  session sharing that directory (incidents 2026-08-09 and 2026-11-04). Copies the ignored `.env*` and runs
+  `npm ci` on the front. Deliberately **not** `EnterWorktree`: inside it the harness refuses git on other
+  repos (Kanban in `menthoros-brain`, archive in `menthoros-product`) and, with the `rtk` hook, any git.
+- `/implement` Modes B/C require the session to be in the change's worktree (`cd` into it, or STOP).
+- `/done` cleans up without checkout: `pull --ff-only`, `worktree remove`, `branch -d` (`-D` only with
+  user confirmation after a squash merge).
+### Added
+- `git-guard`: blocks branch switches (`checkout -b/-B`, `switch`, `checkout <ref>`) in the **main
+  worktree** of repos that have `develop`; allows file checkout, `restore` and any secondary worktree.
+  The target repo is now also resolved from `git -C <dir>`, not only `cd <dir> &&`.
+
 ## [1.9.1] — 2026-09-18
 ### Added
 - `tests/validate-manifests.py`: regression guard for the 1.8.2 failure class — checks `hooks.json` has
