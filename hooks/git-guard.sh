@@ -15,7 +15,7 @@ block(){ echo "[git-guard] BLOCKED: $1" >&2; exit 2; }
 # antes de "&&"/";" (se houver) e resolve a branch/repo a partir dele.
 target_dir="$(printf '%s' "$cmd" | python3 -c 'import re,sys
 cmd = sys.stdin.read()
-m = re.match(r"\s*cd\s+([^\n;&]+?)\s*(?:&&|;)", cmd)
+m = re.match(r"\s*cd\s+([^\n;&]+?)\s*(?:&&|;)", cmd) or re.search(r"\bgit\s+-C\s+(\"[^\"]+\"|\x27[^\x27]+\x27|\S+)", cmd)
 print(m.group(1).strip().strip("\x27\"") if m else "")')"
 if [ -n "$target_dir" ] && [ -d "$target_dir" ]; then
   branch="$(git -C "$target_dir" rev-parse --abbrev-ref HEAD 2>/dev/null || echo '')"
@@ -48,5 +48,36 @@ if printf '%s' "$cmd" | grep -qE 'git +merge'; then
 fi
 if printf '%s' "$cmd" | grep -qE 'checkout +(develop|main|master)' && printf '%s' "$cmd" | grep -qE 'git +merge'; then
   block "local integration into a protected branch is not allowed — use a Pull Request (/pr)."
+fi
+
+# Troca de branch no worktree principal de repo com develop (backend/front). HEAD é do diretório,
+# não da sessão: um checkout ali muda a branch de toda sessão que estiver no mesmo diretório
+# (incidentes 2026-08-09 e 2026-11-04). Cada change roda no próprio worktree (/implement init).
+switch_target="$(printf '%s' "$cmd" | python3 -c 'import re,shlex,sys
+for seg in re.split(r"&&|\|\||;|\|", sys.stdin.read()):
+    try: t = shlex.split(seg)
+    except ValueError: continue
+    if "git" not in t: continue
+    t = t[t.index("git") + 1:]
+    while len(t) >= 2 and t[0] == "-C": t = t[2:]
+    if not t: continue
+    if t[0] == "switch": print("SWITCH"); break
+    if t[0] != "checkout": continue
+    args = t[1:]
+    if "--" in args: continue
+    if any(a in ("-b", "-B", "--orphan") for a in args): print("SWITCH"); break
+    pos = [a for a in args if a == "-" or not a.startswith("-")]
+    if pos: print("REF " + pos[0]); break')"
+if [ -n "$switch_target" ]; then
+  g=(git); [ -n "$target_dir" ] && [ -d "$target_dir" ] && g=(git -C "$target_dir")
+  git_dir="$("${g[@]}" rev-parse --path-format=absolute --git-dir 2>/dev/null || echo '')"
+  common_dir="$("${g[@]}" rev-parse --path-format=absolute --git-common-dir 2>/dev/null || echo '')"
+  if [ -n "$git_dir" ] && [ "$git_dir" = "$common_dir" ] \
+     && { "${g[@]}" show-ref --verify --quiet refs/heads/develop || "${g[@]}" show-ref --verify --quiet refs/remotes/origin/develop; }; then
+    ref="${switch_target#REF }"
+    if [ "$switch_target" = SWITCH ] || [ "$ref" = "-" ] || "${g[@]}" rev-parse --verify --quiet "$ref^{commit}" >/dev/null 2>&1; then
+      block "troca de branch no diretório principal do repo — use um worktree por change (/implement init ou git worktree add)."
+    fi
+  fi
 fi
 exit 0
