@@ -46,9 +46,24 @@ genuinely ambiguous):
    instead of skipping the pass — needs `DEEPSEEK_API_KEY` in the environment or a `.env` above the repo.
    Same verification discipline as the Codex pass: verdict + word cap, check every finding against the code.
 3. Clean tree: if there are uncommitted changes, STOP and warn.
-4. `git checkout develop && git pull origin develop && git checkout -b <tipo>/<change-id>`
-   (if a branch already exists for this `<change-id>` — check `git branch --list '*/<change-id>'` — `checkout`
-   it instead, regardless of which `<tipo>` it was created with).
+4. **Worktree da change — nunca checkout no diretório principal.** HEAD é do diretório, não da sessão:
+   um checkout no principal troca a branch de toda sessão que estiver nele (incidentes 2026-08-09 e
+   2026-11-04 no `CLAUDE.md` raiz). O principal fica sempre em `develop`; o `git-guard` bloqueia troca
+   de branch ali. Path: `<workspace>/.worktrees/<repo>-<change-id>`, com `<repo>` = `backend` | `front`
+   (uma change que toca os dois tem um worktree em cada).
+   - `git worktree list` já mostra esse path → reusa, não cria.
+   - Branch `*/<change-id>` já existe (`git branch --list '*/<change-id>'`, qualquer `<tipo>`) →
+     `git worktree add <path> <branch>`.
+   - Senão → `git fetch origin develop` e
+     `git worktree add <path> -b <tipo>/<change-id> origin/develop`.
+   - Worktree novo: copiar os `.env*` ignorados do principal (backend: `.env`, `.env.local`; front:
+     `.env`) — são segredos, cópia local, nunca `git add`; no front, `npm ci`.
+   - Entrar com `cd <path>`. **Não usar `EnterWorktree`:** com ele o harness recusa git em outro repo
+     (o passo 5 commita no `menthoros-brain`, o `/done` no `menthoros-product`) e, com o hook do `rtk`
+     ativo, recusa qualquer git. O `cd` persiste entre comandos porque `.worktrees/` fica dentro do
+     diretório de trabalho da sessão (a raiz do workspace).
+   - Daqui em diante, todo comando de código e git desta change roda no worktree — conferir com
+     `git branch --show-current` antes de cada commit.
 5. **Kanban do `menthoros-brain`:** move o card `<change-id>` de **🔴 A Fazer** para **🏃 Fazendo** em
    `menthoros-brain/10-Product/Kanban - Menthoros.md` — repo irmão dentro do workspace (remote
    `llsilvas/menthoros-brain.git`, branch `master`; não confundir com `/Volumes/MenthorosVault`, o share
@@ -61,7 +76,7 @@ genuinely ambiguous):
 6. **Plan (refine `tasks.md` against the real code):** read `design.md` + `tasks.md` + the actual repo;
    refine the change's `tasks.md` into a concrete execution plan — real sequence/dependencies + a
    `verify:` line per task (how to know it worked). Keep `tasks.md` as the single source (no separate plan file).
-7. Report the branch, the base commit, and that the plan is ready for `run`.
+7. Report the branch, the base commit, the worktree path, and that the plan is ready for `run`.
 
 ## Mode B — `<change-id> <task-id>` (implement ONE task with TDD)
 
@@ -74,7 +89,8 @@ genuinely ambiguous):
    - Tasks with no testable behavior may skip the test — justify it.
 5. Mark the task `[x]` in `tasks.md` and report files/validation/follow-ups.
 
-The branch must already exist (Mode A). Never `--no-verify` / `@SuppressWarnings` / casts to bypass.
+The branch must already exist (Mode A), and the work runs in its worktree (same precondition as Mode C,
+step 1). Never `--no-verify` / `@SuppressWarnings` / casts to bypass.
 
 ## Mode C — `run <change-id> [--step]` (autonomous: stack and execute all remaining tasks in sequence)
 
@@ -82,6 +98,10 @@ Work the change's `tasks.md` top to bottom, autonomously, on the already-created
 
 1. **Precondition:** a branch matching `*/<change-id>` must exist (Mode A) — check with
    `git branch --list '*/<change-id>'`. If not, STOP and tell the user to run `/implement init <change-id>`.
+   The session must be in the change's worktree: if `git branch --show-current` is not that branch,
+   find its path in `git worktree list` and `cd` into it (no `EnterWorktree` — see Mode A, step 4). If the
+   branch has no worktree, STOP and tell the user to run `/implement init <change-id>`; never `checkout`
+   it in the main directory.
 2. Read `tasks.md` and build an ordered queue of the **unchecked** (`[ ]`) tasks. Mirror the queue with TodoWrite so progress is visible.
 3. For each task, in order:
    - **If it needs a human decision** — a product/scope call, an external dependency to confirm, anything phrased "decidir/confirmar", branch creation, or a destructive op — **PAUSE and ask**. Never guess.

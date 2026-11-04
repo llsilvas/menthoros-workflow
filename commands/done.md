@@ -13,7 +13,15 @@ Run AFTER the change's PR has been merged into `develop`. Closes the OpenSpec lo
 2. In `menthoros-product`: update `tasks.md` (implemented vs deferred), then archive the change:
    `openspec archive <change-id>` (or move to `changes/archive/YYYY-MM/YYYY-MM-DD-<change-id>/`).
 3. Update the change's line in `openspec/SPRINTS.md` (mark done / move).
-4. Clean up locally: `git checkout develop && git pull origin develop && git branch -d <branch>`.
+4. Clean up locally, **without checkout** (the main directory is already on `develop`, and the `git-guard`
+   blocks branch switches there). First `cd` out of the change's worktree — to the main directory — if the
+   session is in it. Then:
+   - `git -C <principal> pull --ff-only origin develop`
+   - `git -C <principal> worktree remove <worktree-path>` (path from `git worktree list`; skip if the
+     branch never had a worktree)
+   - `git -C <principal> branch -d <branch>`. If `-d` refuses (a squash merge does not leave the branch
+     "merged" for git), the PR was already confirmed `MERGED` in step 1: ask the user before `-D`
+     (confirmation gate in the root `CLAUDE.md`).
 5. Report what was archived and the SPRINTS update.
 
 Output language per the repo `CLAUDE.md` (PT-BR).
