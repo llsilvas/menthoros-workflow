@@ -16,8 +16,13 @@ versionamento [SemVer](https://semver.org/).
   user confirmation after a squash merge).
 ### Added
 - `git-guard`: blocks branch switches (`checkout -b/-B`, `switch`, `checkout <ref>`) in the **main
-  worktree** of repos that have `develop`; allows file checkout, `restore` and any secondary worktree.
-  The target repo is now also resolved from `git -C <dir>`, not only `cd <dir> &&`.
+  worktree** of repos that have `develop`, including global options (`-c k=v`, `--no-pager`), combined
+  short flags (`-qb`) and remote-only branch names (DWIM); allows file checkout, `restore` and any
+  secondary worktree. The repo is resolved per segment from `git -C <dir>`, else `cd <dir> &&`.
+### Fixed
+- `git-guard`: commit/merge checks now match `git -C <dir> commit` and `git -c k=v commit` (they only
+  matched `git commit`), and the hook resolves paths from the session `cwd` sent in the hook input instead
+  of the hook process's own cwd.
 
 ## [1.9.1] — 2026-09-18
 ### Added

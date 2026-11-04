@@ -18,7 +18,8 @@ Run AFTER the change's PR has been merged into `develop`. Closes the OpenSpec lo
    session is in it. Then:
    - `git -C <principal> pull --ff-only origin develop`
    - `git -C <principal> worktree remove <worktree-path>` (path from `git worktree list`; skip if the
-     branch never had a worktree)
+     branch never had a worktree). If it refuses (uncommitted or untracked files), STOP and report them —
+     never `--force`: they may be work that did not make it into the PR.
    - `git -C <principal> branch -d <branch>`. If `-d` refuses (a squash merge does not leave the branch
      "merged" for git), the PR was already confirmed `MERGED` in step 1: ask the user before `-D`
      (confirmation gate in the root `CLAUDE.md`).

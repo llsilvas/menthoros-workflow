@@ -50,7 +50,8 @@ genuinely ambiguous):
    um checkout no principal troca a branch de toda sessão que estiver nele (incidentes 2026-08-09 e
    2026-11-04 no `CLAUDE.md` raiz). O principal fica sempre em `develop`; o `git-guard` bloqueia troca
    de branch ali. Path: `<workspace>/.worktrees/<repo>-<change-id>`, com `<repo>` = `backend` | `front`
-   (uma change que toca os dois tem um worktree em cada).
+   (uma change que toca os dois tem um worktree em cada). Os comandos `git worktree`/`branch`/`fetch`
+   abaixo rodam no repo principal (`git -C <workspace>/apps/menthoros-<repo> ...`).
    - `git worktree list` já mostra esse path → reusa, não cria.
    - Branch `*/<change-id>` já existe (`git branch --list '*/<change-id>'`, qualquer `<tipo>`) →
      `git worktree add <path> <branch>`.

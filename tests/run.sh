@@ -63,7 +63,12 @@ bguard(){
   w="$(mktemp -d)/wt"; git -C "$r" worktree add -q "$w" -b feat/y 2>/dev/null
   o="$(mktemp -d)"
   if [ "$3" = nodev ]; then git -C "$r" branch -q -m develop master; fi
-  json="$(python3 -c 'import json,sys;print(json.dumps({"tool_input":{"command":sys.argv[1].replace("REPO",sys.argv[2])}}))' "$2" "$r")"
+  git -C "$r" update-ref refs/remotes/origin/feat/rem HEAD
+  # prefixo CWD: -> o JSON leva "cwd" = repo, como o harness manda; o processo do hook roda fora dele
+  json="$(python3 -c 'import json,sys
+c=sys.argv[1].replace("REPO",sys.argv[2]); d={"tool_input":{"command":c}}
+if c.startswith("CWD:"): d={"tool_input":{"command":c[4:]},"cwd":sys.argv[2]}
+print(json.dumps(d))' "$2" "$r")"
   case "$3" in wt) cd_to="$w" ;; out) cd_to="$o" ;; *) cd_to="$r" ;; esac
   ( cd "$cd_to" && printf '%s' "$json" | bash "$HOOKS/git-guard.sh" >/dev/null 2>&1 ); rc=$?
   rm -rf "$r" "$(dirname "$w")" "$o"; echo $rc
@@ -78,6 +83,13 @@ bexpect "switch no principal"             "git switch feat/x"                   
 bexpect "switch -c no principal"          "git switch -c feat/z"                   main 2
 bexpect "cd <repo> && checkout -b"        "cd REPO && git checkout -b feat/z"      out  2
 bexpect "git -C <repo> checkout -b"       "git -C REPO checkout -b feat/z"         out  2
+bexpect "git -c k=v checkout"             "git -c core.x=y checkout feat/x"        main 2
+bexpect "git --no-pager checkout"         "git --no-pager checkout feat/x"         main 2
+bexpect "flags combinadas -qb"            "git checkout -qb feat/z"                main 2
+bexpect "branch só remota (DWIM)"         "git checkout feat/rem"                  main 2
+bexpect "-C por segmento"                 "git -C /tmp status && git -C REPO checkout -b q" out 2
+bexpect "git -C <repo> commit em develop" "git -C REPO commit -m x"                out  2
+bexpect "cwd do JSON (hook fora do repo)" "CWD:git checkout -b feat/z"             out  2
 
 echo "git-guard — troca de branch: must ALLOW (exit 0):"
 bexpect "checkout -- arquivo"             "git checkout -- src/a.java"             main 0
@@ -87,6 +99,7 @@ bexpect "restore"                         "git restore src/a.java"              
 bexpect "checkout no worktree secundário" "git checkout feat/x"                    wt   0
 bexpect "repo sem develop (master-only)"  "git checkout -b docs/x"                 nodev 0
 bexpect "worktree add no principal"       "git worktree add ../w -b feat/z"        main 0
+bexpect "-C por segmento (checkout fora)" "git -C REPO status && git -C /tmp checkout -b q" out 0
 
 # ---- qa-gate: decision logic with stubbed mvnw/npm ----
 qagate(){ # $1=projectdir -> exit code (PATH may be augmented by caller via $2)
